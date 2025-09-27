@@ -1,45 +1,44 @@
 ```typescript
-import { InteractiveLearningTool } from './InteractiveLearningTool';
+import { getInteractiveLearningTools } from './interactiveLearningTools';
 
-describe('InteractiveLearningTool', () => {
-    let tool: InteractiveLearningTool;
+describe('getInteractiveLearningTools', () => {
+    const mockTools = [
+        {
+            name: 'Tool 1',
+            description: 'This is a description of Tool 1.',
+            url: 'http://example.com/tool1'
+        },
+        {
+            name: 'Tool 2',
+            description: 'This is a description of Tool 2.',
+            url: 'http://example.com/tool2'
+        }
+    ];
 
-    beforeEach(() => {
-        tool = new InteractiveLearningTool(['hammer', 'screwdriver', 'wrench']);
+    it('should return a list of interactive learning tools for a given subject', async () => {
+        const subject = 'math';
+        const result = await getInteractiveLearningTools(subject);
+
+        expect(result.success).toBe(true);
+        expect(result.data).toEqual(mockTools);
+        expect(result.message).toBe(`Successfully fetched interactive learning tools for subject: ${subject}`);
     });
 
-    describe('practiceWithTool', () => {
-        it('should resolve with a success message when the tool is available', async () => {
-            expect.assertions(2);
-            try {
-                const response = await tool.practiceWithTool('hammer');
-                expect(response.status).toBe('success');
-                expect(response.message).toBe('You are now practicing with the hammer.');
-            } catch (error) {
-                throw error;
-            }
-        });
+    it('should throw an error when an error occurs during the operation', async () => {
+        const subject = 'math';
+        const errorMessage = 'Failed to fetch interactive learning tools for subject: ${subject}. Error: Network Error';
 
-        it('should reject with an error message when the tool is not available', async () => {
-            expect.assertions(2);
-            try {
-                await tool.practiceWithTool('drill');
-            } catch (error) {
-                expect(error.status).toBe('error');
-                expect(error.message).toBe('The tool drill is not available.');
-            }
-        });
+        jest.spyOn(global, 'fetch').mockImplementationOnce(() =>
+            Promise.reject(new Error(errorMessage))
+        );
 
-        it('should reject with an error message when an error occurs', async () => {
-            expect.assertions(2);
-            const faultyTool = new InteractiveLearningTool(null as any);
-            try {
-                await faultyTool.practiceWithTool('hammer');
-            } catch (error) {
-                expect(error.status).toBe('error');
-                expect(error.message).toBe('An error occurred while trying to practice with the tool hammer.');
-            }
-        });
+        try {
+            await getInteractiveLearningTools(subject);
+        } catch (error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error).toHaveProperty('message', errorMessage);
+        }
     });
 });
 ```
+Please note that the actual implementation of the `getInteractiveLearningTools` function is not provided, so the test is based on the provided function signature and the mock data. The `fetch` function is mocked to simulate an error scenario.
