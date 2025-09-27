@@ -1,53 +1,55 @@
 ```typescript
-import { InteractiveLearningTool } from './InteractiveLearningTool';
+import { getLearningTools, InteractiveLearningTool, LearningToolsResponse } from './path_to_your_file';
 
-describe('InteractiveLearningTool', () => {
-  let learningTool: InteractiveLearningTool;
+describe('getLearningTools function', () => {
+    let tools: InteractiveLearningTool[];
+    let response: LearningToolsResponse;
 
-  beforeEach(() => {
-    learningTool = new InteractiveLearningTool();
-  });
+    beforeEach(() => {
+        tools = [
+            {
+                id: '1',
+                name: 'Tool 1',
+                description: 'This is an interactive learning tool.',
+                url: 'http://example.com/tool1',
+            },
+            // More tools...
+        ];
 
-  describe('getAvailableTools', () => {
-    it('should return the available tools with a success status when there are tools', () => {
-      const expectedResponse = {
-        status: 'success',
-        tools: ['Quiz', 'Flashcards', 'Interactive Videos', 'Practice Tests']
-      };
-
-      const response = learningTool.getAvailableTools();
-
-      expect(response).toEqual(expectedResponse);
+        response = {
+            success: true,
+            message: 'Interactive learning tools fetched successfully.',
+            data: tools,
+        };
     });
 
-    it('should return an error status with no tools when there are no tools available', () => {
-      // Mock the tools array to be empty
-      learningTool['tools'] = [];
-
-      const expectedResponse = {
-        status: 'error',
-        tools: []
-      };
-
-      const response = learningTool.getAvailableTools();
-
-      expect(response).toEqual(expectedResponse);
+    it('should return a successful response when fetching learning tools', async () => {
+        const result = await getLearningTools();
+        expect(result).toEqual(response);
     });
 
-    it('should log an error when there are no tools available', () => {
-      // Mock the tools array to be empty
-      learningTool['tools'] = [];
-
-      // Mock console.error
-      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-      learningTool.getAvailableTools();
-
-      expect(consoleSpy).toHaveBeenCalledWith(new Error('No tools available'));
-
-      // Restore console.error
-      consoleSpy.mockRestore();
+    it('should return the correct number of learning tools', async () => {
+        const result = await getLearningTools();
+        expect(result.data?.length).toEqual(tools.length);
     });
-  });
+
+    it('should return an error response when fetching fails', async () => {
+        const errorMessage = 'Error fetching interactive learning tools: Network Error';
+        const errorResponse = {
+            success: false,
+            message: errorMessage,
+        };
+
+        // Mock the function to throw an error
+        jest.spyOn(global, 'getLearningTools').mockImplementationOnce(() => {
+            throw new Error('Network Error');
+        });
+
+        try {
+            await getLearningTools();
+        } catch (error) {
+            expect(error).toEqual(errorResponse);
+        }
+    });
 });
 ```
