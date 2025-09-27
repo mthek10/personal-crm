@@ -1,54 +1,38 @@
 ```typescript
-import { fetchLearningTools } from './learningTools';
+import { getInteractiveLearningTools, ResponseObject, InteractiveLearningTool } from './interactiveLearningTools';
 
-describe('fetchLearningTools', () => {
-  it('returns the correct data when the operation is successful', async () => {
-    const expectedResult = {
-      success: true,
-      message: 'Learning tools fetched successfully.',
-      data: [
-        {
-          name: 'Quiz',
-          description: 'A set of questions to test your understanding.',
-          isAvailable: true,
-        },
-        {
-          name: 'Flashcards',
-          description: 'Cards with questions or terms on one side and the answers on the other.',
-          isAvailable: true,
-        },
-        {
-          name: 'Interactive Videos',
-          description: 'Videos with embedded interactive elements.',
-          isAvailable: false,
-        },
-      ],
-    };
+describe('getInteractiveLearningTools', () => {
+  it('should return a successful response with interactive learning tools', async () => {
+    const expectedTools: InteractiveLearningTool[] = [
+      {
+        id: '1',
+        name: 'Tool 1',
+        description: 'This is an interactive learning tool.',
+        url: 'http://example.com/tool1',
+      },
+    ];
 
-    const result = await fetchLearningTools();
-    expect(result).toEqual(expectedResult);
+    const response: ResponseObject = await getInteractiveLearningTools();
+
+    expect(response.success).toBe(true);
+    expect(response.data).toEqual(expectedTools);
+    expect(response.error).toBeUndefined();
   });
 
-  it('returns the correct error message when an error occurs', async () => {
-    const expectedResult = {
-      success: false,
-      message: 'An error occurred while fetching the learning tools.',
-      data: [],
-    };
+  it('should return an error response when an exception is thrown', async () => {
+    const errorMessage = 'An error occurred while fetching the interactive learning tools.';
 
     // Mock the function to throw an error
-    jest.spyOn(global, 'fetchLearningTools').mockImplementation(() => {
+    jest.spyOn(global, 'getInteractiveLearningTools').mockImplementationOnce(() => {
       throw new Error();
     });
 
-    const result = await fetchLearningTools();
-    expect(result).toEqual(expectedResult);
-  });
+    const response: ResponseObject = await getInteractiveLearningTools();
 
-  // Restore the original function after the test
-  afterEach(() => {
-    jest.restoreAllMocks();
+    expect(response.success).toBe(false);
+    expect(response.data).toBeUndefined();
+    expect(response.error).toEqual(errorMessage);
   });
 });
 ```
-This Jest test suite includes two test cases. The first one tests the successful operation of the `fetchLearningTools` function, and the second one tests the error handling of the function. The `afterEach` block ensures that the original function is restored after each test case.
+Please note that this test assumes that the `getInteractiveLearningTools` function and its related interfaces are exported from the `interactiveLearningTools` module. If they are not exported, you will need to adjust the import statement accordingly. Also, the error case assumes that any error in the function results in a standardized error message. If the error message can vary, you will need to adjust the test accordingly.
