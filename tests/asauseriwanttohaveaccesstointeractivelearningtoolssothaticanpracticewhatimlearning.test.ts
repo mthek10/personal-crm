@@ -1,38 +1,53 @@
 ```typescript
-import { getInteractiveLearningTools, ResponseObject, InteractiveLearningTool } from './interactiveLearningTools';
+import { InteractiveLearningTool } from './InteractiveLearningTool';
 
-describe('getInteractiveLearningTools', () => {
-  it('should return a successful response with interactive learning tools', async () => {
-    const expectedTools: InteractiveLearningTool[] = [
-      {
-        id: '1',
-        name: 'Tool 1',
-        description: 'This is an interactive learning tool.',
-        url: 'http://example.com/tool1',
-      },
-    ];
+describe('InteractiveLearningTool', () => {
+  let learningTool: InteractiveLearningTool;
 
-    const response: ResponseObject = await getInteractiveLearningTools();
-
-    expect(response.success).toBe(true);
-    expect(response.data).toEqual(expectedTools);
-    expect(response.error).toBeUndefined();
+  beforeEach(() => {
+    learningTool = new InteractiveLearningTool();
   });
 
-  it('should return an error response when an exception is thrown', async () => {
-    const errorMessage = 'An error occurred while fetching the interactive learning tools.';
+  describe('getAvailableTools', () => {
+    it('should return the available tools with a success status when there are tools', () => {
+      const expectedResponse = {
+        status: 'success',
+        tools: ['Quiz', 'Flashcards', 'Interactive Videos', 'Practice Tests']
+      };
 
-    // Mock the function to throw an error
-    jest.spyOn(global, 'getInteractiveLearningTools').mockImplementationOnce(() => {
-      throw new Error();
+      const response = learningTool.getAvailableTools();
+
+      expect(response).toEqual(expectedResponse);
     });
 
-    const response: ResponseObject = await getInteractiveLearningTools();
+    it('should return an error status with no tools when there are no tools available', () => {
+      // Mock the tools array to be empty
+      learningTool['tools'] = [];
 
-    expect(response.success).toBe(false);
-    expect(response.data).toBeUndefined();
-    expect(response.error).toEqual(errorMessage);
+      const expectedResponse = {
+        status: 'error',
+        tools: []
+      };
+
+      const response = learningTool.getAvailableTools();
+
+      expect(response).toEqual(expectedResponse);
+    });
+
+    it('should log an error when there are no tools available', () => {
+      // Mock the tools array to be empty
+      learningTool['tools'] = [];
+
+      // Mock console.error
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+      learningTool.getAvailableTools();
+
+      expect(consoleSpy).toHaveBeenCalledWith(new Error('No tools available'));
+
+      // Restore console.error
+      consoleSpy.mockRestore();
+    });
   });
 });
 ```
-Please note that this test assumes that the `getInteractiveLearningTools` function and its related interfaces are exported from the `interactiveLearningTools` module. If they are not exported, you will need to adjust the import statement accordingly. Also, the error case assumes that any error in the function results in a standardized error message. If the error message can vary, you will need to adjust the test accordingly.
