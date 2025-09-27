@@ -1,47 +1,60 @@
 ```typescript
 /**
- * @file This file contains the function to provide interactive learning tools.
+ * @fileoverview Interactive Learning Tools
+ * @author Your Name
  */
 
 /**
- * InteractiveLearningTool represents a tool or resource for interactive learning.
- * @typedef {Object} InteractiveLearningTool
- * @property {string} name - The name of the tool.
- * @property {string} description - A brief description of the tool.
- * @property {string} url - The URL where the tool can be accessed.
+ * @typedef {Object} LearningTool
+ * @property {string} name - The name of the learning tool.
+ * @property {string} description - A brief description of the learning tool.
+ * @property {boolean} isAvailable - The availability status of the learning tool.
  */
 
 /**
- * Provides a list of interactive learning tools.
- * @param {string} subject - The subject for which the tools are needed.
- * @returns {Promise<{success: boolean, data: InteractiveLearningTool[], message: string}>} 
- * Promise object represents the operation's result.
- * @throws {Error} When an error occurs during the operation.
+ * @typedef {Object} Response
+ * @property {boolean} success - The status of the operation.
+ * @property {string} message - A brief message about the operation.
+ * @property {LearningTool[]} data - The data returned from the operation.
  */
-async function getInteractiveLearningTools(subject: string): Promise<{success: boolean, data: InteractiveLearningTool[], message: string}> {
-    try {
-        // This is a placeholder for the actual implementation.
-        // In a real-world scenario, this function would fetch data from a database or an API.
-        const tools: InteractiveLearningTool[] = [
-            {
-                name: 'Tool 1',
-                description: 'This is a description of Tool 1.',
-                url: 'http://example.com/tool1'
-            },
-            {
-                name: 'Tool 2',
-                description: 'This is a description of Tool 2.',
-                url: 'http://example.com/tool2'
-            }
-        ];
 
-        return {
-            success: true,
-            data: tools,
-            message: `Successfully fetched interactive learning tools for subject: ${subject}`
-        };
-    } catch (error) {
-        throw new Error(`Failed to fetch interactive learning tools for subject: ${subject}. Error: ${error.message}`);
-    }
+/**
+ * This function fetches the available learning tools for the user to practice.
+ * @returns {Promise<Response>} The response object containing the status, message, and data.
+ */
+async function fetchLearningTools(): Promise<Response> {
+  try {
+    // Fetching data from an API or database can be simulated here.
+    // For demonstration purposes, we'll use a static array.
+    const tools: LearningTool[] = [
+      {
+        name: 'Quiz',
+        description: 'A set of questions to test your understanding.',
+        isAvailable: true,
+      },
+      {
+        name: 'Flashcards',
+        description: 'Cards with questions or terms on one side and the answers on the other.',
+        isAvailable: true,
+      },
+      {
+        name: 'Interactive Videos',
+        description: 'Videos with embedded interactive elements.',
+        isAvailable: false,
+      },
+    ];
+
+    return {
+      success: true,
+      message: 'Learning tools fetched successfully.',
+      data: tools,
+    };
+  } catch (error) {
+    return {
+      success: false,
+      message: 'An error occurred while fetching the learning tools.',
+      data: [],
+    };
+  }
 }
 ```
