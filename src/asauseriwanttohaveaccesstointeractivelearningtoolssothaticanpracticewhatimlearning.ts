@@ -1,49 +1,47 @@
 ```typescript
 /**
- * InteractiveLearningTool represents a tool or resource for users to practice.
+ * @file This file contains the function to provide interactive learning tools.
  */
-interface InteractiveLearningTool {
-    id: string;
+
+/**
+ * @class InteractiveTool
+ * @description This class represents an interactive learning tool.
+ */
+class InteractiveTool {
+    id: number;
     name: string;
     description: string;
-    url: string;
+
+    constructor(id: number, name: string, description: string) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+    }
 }
 
 /**
- * Response object structure for getLearningTools function.
+ * @function getInteractiveLearningTools
+ * @description This function returns a list of available interactive learning tools.
+ * @returns {Promise<{status: string, data: InteractiveTool[]}>} A promise that resolves to an object containing the status and data.
  */
-interface LearningToolsResponse {
-    success: boolean;
-    message: string;
-    data?: InteractiveLearningTool[];
-}
-
-/**
- * Fetches the available interactive learning tools.
- * @returns {Promise<LearningToolsResponse>} A promise that resolves to a response object.
- */
-async function getLearningTools(): Promise<LearningToolsResponse> {
+async function getInteractiveLearningTools(): Promise<{status: string, data: InteractiveTool[]}> {
     try {
-        // Simulate fetching data from an API or database
-        const tools: InteractiveLearningTool[] = [
-            {
-                id: '1',
-                name: 'Tool 1',
-                description: 'This is an interactive learning tool.',
-                url: 'http://example.com/tool1',
-            },
-            // More tools...
+        // This is just a mockup data, in real scenario, we would fetch data from a database or an API.
+        const tools: InteractiveTool[] = [
+            new InteractiveTool(1, 'Tool 1', 'This is an interactive learning tool 1.'),
+            new InteractiveTool(2, 'Tool 2', 'This is an interactive learning tool 2.'),
+            new InteractiveTool(3, 'Tool 3', 'This is an interactive learning tool 3.')
         ];
 
         return {
-            success: true,
-            message: 'Interactive learning tools fetched successfully.',
-            data: tools,
+            status: 'success',
+            data: tools
         };
     } catch (error) {
+        console.error('Error fetching interactive learning tools:', error);
         return {
-            success: false,
-            message: `Error fetching interactive learning tools: ${error.message}`,
+            status: 'error',
+            data: []
         };
     }
 }

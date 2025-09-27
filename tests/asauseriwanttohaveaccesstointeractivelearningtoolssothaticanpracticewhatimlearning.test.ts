@@ -1,55 +1,37 @@
 ```typescript
-import { getLearningTools, InteractiveLearningTool, LearningToolsResponse } from './path_to_your_file';
+import { getInteractiveLearningTools, InteractiveTool } from './InteractiveLearningTools';
 
-describe('getLearningTools function', () => {
-    let tools: InteractiveLearningTool[];
-    let response: LearningToolsResponse;
+describe('InteractiveLearningTools', () => {
+    describe('getInteractiveLearningTools', () => {
+        it('should return a list of interactive learning tools on success', async () => {
+            const tools: InteractiveTool[] = [
+                new InteractiveTool(1, 'Tool 1', 'This is an interactive learning tool 1.'),
+                new InteractiveTool(2, 'Tool 2', 'This is an interactive learning tool 2.'),
+                new InteractiveTool(3, 'Tool 3', 'This is an interactive learning tool 3.')
+            ];
 
-    beforeEach(() => {
-        tools = [
-            {
-                id: '1',
-                name: 'Tool 1',
-                description: 'This is an interactive learning tool.',
-                url: 'http://example.com/tool1',
-            },
-            // More tools...
-        ];
+            const result = await getInteractiveLearningTools();
 
-        response = {
-            success: true,
-            message: 'Interactive learning tools fetched successfully.',
-            data: tools,
-        };
-    });
-
-    it('should return a successful response when fetching learning tools', async () => {
-        const result = await getLearningTools();
-        expect(result).toEqual(response);
-    });
-
-    it('should return the correct number of learning tools', async () => {
-        const result = await getLearningTools();
-        expect(result.data?.length).toEqual(tools.length);
-    });
-
-    it('should return an error response when fetching fails', async () => {
-        const errorMessage = 'Error fetching interactive learning tools: Network Error';
-        const errorResponse = {
-            success: false,
-            message: errorMessage,
-        };
-
-        // Mock the function to throw an error
-        jest.spyOn(global, 'getLearningTools').mockImplementationOnce(() => {
-            throw new Error('Network Error');
+            expect(result.status).toEqual('success');
+            expect(result.data).toEqual(tools);
         });
 
-        try {
-            await getLearningTools();
-        } catch (error) {
-            expect(error).toEqual(errorResponse);
-        }
+        it('should return an error status and an empty list on failure', async () => {
+            const consoleSpy = jest.spyOn(console, 'error').mockImplementation();
+
+            // Simulate an error by throwing an exception in the function
+            jest.spyOn(global, 'getInteractiveLearningTools').mockImplementationOnce(() => {
+                throw new Error('Test error');
+            });
+
+            const result = await getInteractiveLearningTools();
+
+            expect(result.status).toEqual('error');
+            expect(result.data).toEqual([]);
+            expect(consoleSpy).toHaveBeenCalledWith('Error fetching interactive learning tools:', new Error('Test error'));
+
+            consoleSpy.mockRestore();
+        });
     });
 });
 ```
